@@ -32,6 +32,7 @@ pipeline {
                             // Build the second Docker image located in backend folder
                            // docker.build("aahalqarni-backend:latest", "./backend")
                  //       }
+                        sh 'echo test'
                     }
                 }
             }
