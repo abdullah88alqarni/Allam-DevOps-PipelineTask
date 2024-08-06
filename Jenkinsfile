@@ -22,7 +22,8 @@ pipeline {
                     steps {
                         script {
                             // Build the first Docker image located in frontend folder
-                            docker.build("aahalqarni-frontend:latest", "./frontend")
+                           // docker.build("aahalqarni-frontend:latest", "./frontend")
+                            sh 'echo test'
                         }
                     }
                 }
@@ -41,8 +42,8 @@ pipeline {
         stage('Login to Azure Container Registry') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'azure-login', usernameVariable: $azure_username, passwordVariable: $azure-pass)]) {
-                        sh 'az login --service-principal -u $azure_username -p $azure-pass --tenant 58c64807-3315-4150-9fa2-84efc0ba24b6'              
+                    withCredentials([usernamePassword(credentialsId: 'azure-login', usernameVariable: 'azure_username', passwordVariable: 'azure_pass')]) {
+                        sh 'az login --service-principal -u $azure_username -p $azure_pass --tenant 58c64807-3315-4150-9fa2-84efc0ba24b6'              
                         sh "az acr login --name ${ACR_NAME}"
                     }
                 }
