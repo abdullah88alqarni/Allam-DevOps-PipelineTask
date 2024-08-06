@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get install -y ca-certificates && \
     rm -rf /var/lib/apt/lists/* # cleans up the package list to reduce the image size
 
-COPY ca-certs/*.crt /usr/local/share/ca-certificates/
+COPY ./ca-certs/* /usr/local/share/ca-certificates/
 RUN update-ca-certificates
 
 # Sets the working directory inside the container
