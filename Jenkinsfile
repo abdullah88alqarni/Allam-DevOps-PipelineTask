@@ -30,7 +30,7 @@ pipeline {
                     steps {
                         script {
                             // Build the second Docker image located in backend folder
-                            docker.build("aahalqarni-backend:latest", "./backend")
+                           // docker.build("aahalqarni-backend:latest", "./backend")
                         }
                     }
                 }
@@ -40,8 +40,10 @@ pipeline {
         stage('Login to Azure Container Registry') {
             steps {
                 script {
-                    // Login to ACR
-                    sh "az acr login --name ${ACR_NAME}"
+                    withCredentials([usernamePassword(credentialsId: 'azure-login', usernameVariable: $azure_username, passwordVariable: $azure-pass)]) {
+                        sh 'az login --service-principal -u $azure_username -p $azure-pass --tenant 58c64807-3315-4150-9fa2-84efc0ba24b6'              
+                        sh "az acr login --name ${ACR_NAME}"
+                    }
                 }
             }
         }
