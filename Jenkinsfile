@@ -22,7 +22,7 @@ pipeline {
                     steps {
                         script {
                             // Build the first Docker image located in frontend folder
-                            docker.build("aahalqarni-frontend:latest", "-f frontend/Dockerfile .")
+                            docker.build("aahalqarni-frontend:latest", "./frontend")
                         }
                     }
                 }
@@ -30,7 +30,7 @@ pipeline {
                     steps {
                         script {
                             // Build the second Docker image located in backend folder
-                            docker.build("aahalqarni-backend:latest", "-f backend/Dockerfile .")
+                            docker.build("aahalqarni-backend:latest", "./backend")
                         }
                     }
                 }
