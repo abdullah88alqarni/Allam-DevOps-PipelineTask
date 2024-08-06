@@ -12,7 +12,7 @@ pipeline {
         stage('Clone repository') {
             steps {
                 // Clone the GitHub repository
-                git url: 'https://github.com/abdullah88alqarni/Allam-DevOps-PipelineTask.git', credentialsId: 'github-creds'
+                git url: 'https://github.com/abdullah88alqarni/Allam-DevOps-PipelineTask.git', branch: 'main' , credentialsId: 'github-creds'
             }
         }
         
