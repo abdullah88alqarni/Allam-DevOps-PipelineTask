@@ -28,10 +28,10 @@ pipeline {
                 }
                 stage('Build Image 2') {
                     steps {
-                        script {
+               //         script {
                             // Build the second Docker image located in backend folder
                            // docker.build("aahalqarni-backend:latest", "./backend")
-                        }
+                 //       }
                     }
                 }
             }
