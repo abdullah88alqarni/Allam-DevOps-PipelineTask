@@ -55,7 +55,8 @@ pipeline {
                         script {
                             // Tag and push the first Docker image
                             sh """
-                                docker push aahalqarni-frontend:latest
+                                docker tag aahalqarni-frontend:latest ${ACR_LOGIN_SERVER}/aahalqarni-frontend:latest
+                                docker push ${ACR_LOGIN_SERVER}/aahalqarni-frontend:latest
                             """
                         }
                     }
@@ -65,7 +66,8 @@ pipeline {
                         script {
                             // Tag and push the second Docker image
                             sh """
-                                docker push aahalqarni-backend:latest
+                                docker tag aahalqarni-backend:latest ${ACR_LOGIN_SERVER}/aahalqarni-backend:latest
+                                docker push ${ACR_LOGIN_SERVER}/aahalqarni-backend:latest
                             """
                         }
                     }
