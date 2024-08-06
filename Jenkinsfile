@@ -2,41 +2,73 @@ pipeline {
     agent any
     
     environment {
-        AZURE_CREDENTIALS = credentials('azure-service-principal')
+        // Environment variables
+        AZURE_CREDENTIALS_ID = 'Azure-Service-Principal'
         ACR_NAME = 'devncai'
-        IMAGE_NAME = 'myapp'
-        IMAGE_TAG = 'latest'
-        ACR_LOGIN_SERVER = "${ACR_NAME}.azurecr.io"
+        ACR_LOGIN_SERVER = 'devncai.azurecr.io'
     }
     
     stages {
-        stage('Clone Repository') {
+        stage('Clone repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/yourusername/yourrepository.git'
+                // Clone the GitHub repository
+                git url: 'https://github.com/abdullah88alqarni/Allam-DevOps-PipelineTask.git', credentialsId: 'github-creds'
             }
         }
         
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build("${env.ACR_LOGIN_SERVER}/${env.IMAGE_NAME}:${env.IMAGE_TAG}")
+        stage('Build Docker Images') {
+            parallel {
+                stage('Build Image 1') {
+                    steps {
+                        script {
+                            // Build the first Docker image located in frontend folder
+                            docker.build("aahalqarni-frontend:latest", "-f frontend/Dockerfile .")
+                        }
+                    }
+                }
+                stage('Build Image 2') {
+                    steps {
+                        script {
+                            // Build the second Docker image located in backend folder
+                            docker.build("aahalqarni-backend:latest", "-f backend/Dockerfile .")
+                        }
+                    }
                 }
             }
         }
         
-        stage('Login to Azure') {
+        stage('Login to Azure Container Registry') {
             steps {
                 script {
-                    sh "az login --service-principal -u ${env.AZURE_CREDENTIALS_USR} -p ${env.AZURE_CREDENTIALS_PSW} --tenant ${env.AZURE_CREDENTIALS_TEN}"
+                    // Login to ACR
+                    sh "az acr login --name ${ACR_NAME}"
                 }
             }
         }
         
-        stage('Push to ACR') {
-            steps {
-                script {
-                    sh "az acr login --name ${env.ACR_NAME}"
-                    docker.image("${env.ACR_LOGIN_SERVER}/${env.IMAGE_NAME}:${env.IMAGE_TAG}").push()
+        stage('Push Docker Images to ACR') {
+            parallel {
+                stage('Push Image 1') {
+                    steps {
+                        script {
+                            // Tag and push the first Docker image
+                            sh """
+                                docker tag aahalqarni-frontend:latest ${ACR_LOGIN_SERVER}/aahalqarni-frontend:latest
+                                docker push ${ACR_LOGIN_SERVER}/aahalqarni-frontend:latest
+                            """
+                        }
+                    }
+                }
+                stage('Push Image 2') {
+                    steps {
+                        script {
+                            // Tag and push the second Docker image
+                            sh """
+                                docker tag aahalqarni-backend:latest ${ACR_LOGIN_SERVER}/aahalqarni-backend:latest
+                                docker push ${ACR_LOGIN_SERVER}/aahalqarni-backend:latest
+                            """
+                        }
+                    }
                 }
             }
         }
@@ -44,7 +76,8 @@ pipeline {
     
     post {
         always {
-            cleanWs()
+            // Cleanup Docker images from local system
+            sh 'docker system prune -af'
         }
     }
 }
